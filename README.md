@@ -103,3 +103,5 @@ One issue that was faces was the issue of balancing false positives vs losing ve
 The implementation I have also takes a long time to execute and will not be able to run effectivly in real-time. This issue needs to be addressed further, but for the purpose of this project I think it is good enough as is. A better approach that would track better and be simpler to execute is to, instead of recording previous bounding boxes, to find the centroid of each box, use a Kalman filter to track them from frame to next frame and then only search around previously found vehicles and windows were new cars may appear (along the horizon or from the left right).
 
 Further due to the way I made the windows, it can only identify vehicles on the right. Any oncomming vehicle will not be in the field of view, or if there are hills/valleys where the vehicles do not fit into the y axis range chosen. This should also be taken into account for further development.
+
+Finally, vehicle detection from this project should be combined with lane tracking from the previous project.
