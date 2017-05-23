@@ -354,20 +354,21 @@ gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1],None,None)
 
 y_start_stop = [280, 600]
-windows1 = slide_window(image, x_start_stop=[800, 1200], y_start_stop=[300, 600], 
+windows1 = slide_window(image, x_start_stop=[850, 1080], y_start_stop=[380,500], 
+                    xy_window=(64, 64), xy_overlap=(0.85, 0.85))
+
+windows2 = slide_window(image, x_start_stop=[800, 1120], y_start_stop=[350, 550], 
+                    xy_window=(92, 92), xy_overlap=(0.8, 0.8))
+
+windows3 = slide_window(image, x_start_stop=[800, None], y_start_stop=[300, 600], 
                     xy_window=(128, 128), xy_overlap=(0.75, 0.75))
+				
 
-windows2 = slide_window(image, x_start_stop=[800, 1200], y_start_stop=[300, 550], 
-                    xy_window=(92, 92), xy_overlap=(0.5, 0.5))
-
-windows3 = slide_window(image, x_start_stop=[800, 1200], y_start_stop=[300,500], 
-                    xy_window=(64, 64), xy_overlap=(0.5, 0.5))
-
-windows4 = slide_window(image, x_start_stop=[800, None], y_start_stop=y_start_stop, 
-                    xy_window=(196, 196), xy_overlap=(0.75, 0.75))
+#windows4 = slide_window(image, x_start_stop=[800, None], y_start_stop=y_start_stop, 
+ #                   xy_window=(196, 196), xy_overlap=(0.5, 0.5))
 
 # print(windows1, windows2, (windows1+windows2))
-windows = windows1  + windows2 + windows3 + windows4
+windows = windows1  + windows2 + windows3 #+ windows4
 
 from scipy.ndimage.measurements import label
 
@@ -406,54 +407,40 @@ def draw_labeled_bboxes(img, labels):
 class vehicle():
     
     def __init__(self):
-        self.frame = 0
-        self.currentHeatmap = 0
-        self.previousHeatmap = 0 
-        self.avgHeatmap = 0
+        self.current_heatmap = 0
+        self.previous_heatmap = 0 
+        self.avg_heatmap = 0
         self.threshold = 0
-        
-    def setFrame(self, frame):
-        self.frame = frame
-        self.update()
         
     def set_threshold(self, threshold):
         self.threshold = threshold
-        
-    def returnFrame(self):
-        return self.frame
     
-    def setHeatmap(self, heatmap):
-        self.previousHeatmap = self.currentHeatmap
-        self.currentHeatmap = heatmap
-        self.add2avgHeatmap()
-        # self.returnAvgHeatmap()
+    def set_heatmap(self, heatmap):
+        self.previous_heatmap = self.current_heatmap
+        self.current_heatmap = heatmap
+        self.update_heatmap()
         
-    def returnAvgHeatmap(self):
-        #print(self.avgHeatmap)
-        return self.avgHeatmap
+    def return_avg_heatmap(self):
+        return self.avg_heatmap
     
-    def add2avgHeatmap(self):
-        # print(self.avgHeatmap.shape, self.currentHeatmap.shape)
-        self.currentHeatmap = apply_threshold(self.currentHeatmap, self.threshold)
-        self.avgHeatmap = (0.75*self.avgHeatmap + self.currentHeatmap) # 0.8 * self.avgHeatmap + 
-        self.avgHeatmap = apply_threshold(self.avgHeatmap, self.threshold)
+    def update_heatmap(self):
+        self.current_heatmap = apply_threshold(self.current_heatmap, self.threshold)
+        self.avg_heatmap = (0.75*self.avg_heatmap + 0.25*self.current_heatmap)
+        self.avg_heatmap = apply_threshold(self.avg_heatmap, self.threshold)
         
     def update(self):
-        self.currentHeatmap = np.zeros_like(self.frame[:,:,0]).astype(np.float)
-        self.previousHeatmap =np.zeros_like(self.frame[:,:,0]).astype(np.float)
-        self.avgHeatmap = np.zeros_like(self.frame[:,:,0]).astype(np.float)
+        self.current_heatmap = np.zeros_like(self.frame[:,:,0]).astype(np.float)
+        self.previous_heatmap =np.zeros_like(self.frame[:,:,0]).astype(np.float)
+        self.avg_heatmap = np.zeros_like(self.frame[:,:,0]).astype(np.float)
         
     #def boxcenter(self)
 
 from collections import deque
 
-class BoundingBoxes:
+class bounding_boxes:
     def __init__(self,n=10):
-        # length of queue to store data
-        self.n = n
-        # hot windows of the last n images
-        self.recent_boxes = deque([],maxlen=n)
-        # current boxes
+        self.n = n # length of queue to store data
+        self.recent_boxes = deque([],maxlen=n) # hot windows of the last n images
         self.current_boxes = None
         self.boxes = []
 
@@ -478,8 +465,8 @@ class BoundingBoxes:
         self.get_boxes()
         
 vehicles = vehicle()
-boxes = BoundingBoxes(n=12)
-vehicles.set_threshold(threshold=250)
+boxes = bounding_boxes(n=9)
+vehicles.set_threshold(threshold=350)
 
 def video_pipeline(img):    
 
@@ -498,33 +485,20 @@ def video_pipeline(img):
     
     heat = np.zeros_like(image[:,:,0]).astype(np.float)
     heat = add_heat(heat, boxes.boxes)
-    
-    # Apply threshold to help remove false positives
-    #heat = apply_threshold(heat,3)
 
-    # Visualize the heatmap when displaying    
-    #heatmap = np.clip(heat, 0, 255)
     
-    vehicles.setHeatmap(heat)
-    heatmap = vehicles.returnAvgHeatmap()
-    # print(heatmap, heatmapAVG)
-    
-    #finalRes = boundingBox(heatmap)
-    
-    #for box in finalRes:
-        #cv2.rectangle(imgOutput, box[0], box[1], (1,255,1), 3)
-        
+    vehicles.set_heatmap(heat)
+    heatmap = vehicles.return_avg_heatmap()
+       
     labels = label(heatmap)
-    #print(labels)
-    #if labels[1]==2:
     draw_img = draw_labeled_bboxes(np.copy(img), labels)
     return(draw_img)
 
 
 from moviepy.editor import VideoFileClip
 
-output = 'test_video_output.mp4'
-clip1 = VideoFileClip("project_video.mp4")#.subclip(15,20)
+output = 'video_output.mp4'
+clip1 = VideoFileClip("project_video.mp4")#.subclip(25,30)
 output_clip = clip1.fl_image(video_pipeline) #NOTE: this function expects color images!!
 output_clip.write_videofile(output, audio=False)
 
