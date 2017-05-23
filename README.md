@@ -17,9 +17,9 @@ The goals / steps of this project are the following:
 [image4]: ./output_images/vehicle_detection_example1.jpg
 [image5]: ./output_images/vehicle_detection_example2.jpg
 [image6]: ./output_images/vehicle_detection_example3.jpg
-[image7]: ./output_images/detectionexample1.jpg
-[image8]: ./output_images/detectionexample2.jpg
-[image9]: ./output_images/detectionexample3.jpg
+[image7]: ./output_images/detection_example1.jpg
+[image8]: ./output_images/detection_example2.jpg
+[image9]: ./output_images/detection_example3.jpg
 [video1]: ./project_video.mp4
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
