@@ -53,6 +53,8 @@ Here is an example using the `YCrCb` color space and HOG parameters of `orientat
 
 I tried various combinations of parameters and different colorspaces, and basically went through a trial and error phase to look at both output result and how long it took. 
 
+First I started with BGR(RGB) channels, but the performance was not statisfactory for use in hog. I tried with the L channel in HLS, which seemed to work adequetly, but the best performance was obtained with Y channel in YCrCb (although I finally added all three channels because I was losing track of the car sometimes). I tried with orientation 9 and 18 , with 9 I had a 0.975 accuracy and with 18 a 0.99 so I stuck with 18. Using values larger than 2 cells per block did not help.
+
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
 I trained a linear SVM using a linear svc and hog features, histogram bin size of 16 bins and spatial bins of 32x32. The training was done in the 9th cell in the ipynb (and in lines 303-317 of `vehicledetection.py`), and achieves accuracy of around 0.991. There are 13704 feature total.
