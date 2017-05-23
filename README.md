@@ -87,7 +87,9 @@ I recorded the positions of positive detections in each frame of the video.  Fro
 Here's an example result showing the heatmap from a series of frames of video
 
 ![alt text][image7]
+
 ![alt text][image8]
+
 ![alt text][image9]
 
 ---
@@ -99,3 +101,5 @@ Here's an example result showing the heatmap from a series of frames of video
 One issue that was faces was the issue of balancing false positives vs losing vehicle tracking. If the parameters were set too tight, false positives would dissapear but then I would lose tracking of the cars in some places. This required a lot of parameter tuning to get right with my current algorithm.
 
 The implementation I have also takes a long time to execute and will not be able to run effectivly in real-time. This issue needs to be addressed further, but for the purpose of this project I think it is good enough as is. A better approach that would track better and be simpler to execute is to, instead of recording previous bounding boxes, to find the centroid of each box, use a Kalman filter to track them from frame to next frame and then only search around previously found vehicles and windows were new cars may appear (along the horizon or from the left right).
+
+Further due to the way I made the windows, it can only identify vehicles on the right. Any oncomming vehicle will not be in the field of view, or if there are hills/valleys where the vehicles do not fit into the y axis range chosen. This should also be taken into account for further development.
