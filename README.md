@@ -55,6 +55,8 @@ I tried various combinations of parameters and different colorspaces, and basica
 
 First I started with BGR(RGB) channels, but the performance was not statisfactory for use in hog. I tried with the L channel in HLS, which seemed to work adequetly, but the best performance was obtained with Y channel in YCrCb (although I finally added all three channels because I was losing track of the car sometimes). I tried with orientation 9 and 18 , with 9 I had a 0.975 accuracy and with 18 a 0.99 so I stuck with 18. Using values larger than 2 cells per block did not help.
 
+It is important to remember to normalize the feature so one feature does not dominate. This is done by the StandardScalar (line 293).
+
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
 I trained a linear SVM using a linear svc and hog features, histogram bin size of 16 bins and spatial bins of 32x32. The training was done in the 9th cell in the ipynb (and in lines 303-317 of `vehicledetection.py`), and achieves accuracy of around 0.991. There are 13704 feature total.
@@ -64,6 +66,8 @@ I trained a linear SVM using a linear svc and hog features, histogram bin size o
 #### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
 The windows consist of smaller windows of 64x64 with a lot of overlap (0.85 in both x and y direction), a slightly bigger window of 92x92 and 0.8 overlap, and finally a 128x128 window with a 0.75 overlap. These windows are arranged in a matter such that the searching is done relative to car size, i.e. if the car is close and to the right we don't search for it in the 64x64 windows because those are for identifying cars that are further ahead.
+
+I also experimented with larger windows, but this combination seemed to give best results.
 
 ![alt text][image3]
 
