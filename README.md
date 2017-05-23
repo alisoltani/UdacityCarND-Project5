@@ -11,13 +11,15 @@ The goals / steps of this project are the following:
 * Estimate a bounding box for vehicles detected.
 
 [//]: # (Image References)
-[image1]: ./examples/car_not_car.png
-[image2]: ./examples/HOG_example.jpg
-[image3]: ./examples/sliding_windows.jpg
-[image4]: ./examples/sliding_window.jpg
-[image5]: ./output_images/detectionexample1.jpg
-[image5]: ./output_images/detectionexample2.jpg
-[image7]: ./output_images/detectionexample3.jpg
+[image1]: ./output_images/car_not_car.jpg
+[image2]: ./output_images/hog0.jpg
+[image3]: ./output_images/windows.jpg
+[image4]: ./output_images/vehicle_detection_example1.jpg
+[image5]: ./output_images/vehicle_detection_example2.jpg
+[image6]: ./output_images/vehicle_detection_example3.jpg
+[image7]: ./output_images/detectionexample1.jpg
+[image8]: ./output_images/detectionexample2.jpg
+[image9]: ./output_images/detectionexample3.jpg
 [video1]: ./project_video.mp4
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
@@ -68,6 +70,8 @@ The windows consist of smaller windows of 64x64 with a lot of overlap (0.85 in b
 Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
 
 ![alt text][image4]
+![alt text][image5]
+![alt text][image6]
 ---
 
 ### Video Implementation
@@ -82,9 +86,9 @@ I recorded the positions of positive detections in each frame of the video.  Fro
 
 Here's an example result showing the heatmap from a series of frames of video
 
-![alt text][image5]
-![alt text][image6]
 ![alt text][image7]
+![alt text][image8]
+![alt text][image9]
 
 ---
 
